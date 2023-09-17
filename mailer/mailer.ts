@@ -10,24 +10,56 @@ const transporter = nodemailer.createTransport({
   from: "lgiobanellicospt@gmail.com",
 });
 
-// Funcion para enviar un correo electronico
-
-export const sendEmail = async (to: string, code: string): Promise<void> => {
+export const sendEmail = async (
+  to: string,
+  code: string,
+  userName: string
+): Promise<void> => {
   try {
-    // configuracion detalles del correo
+    //Configuration of details to Sent Email
+
     const mailOptions = {
-      from: "lgiobanellicospt@gmail.com",
+      from: '"FootWearn Register" nickswilliamapi@gmail.com',
       to,
-      subject: "Codigo de verificacion para tu cuenta",
-      text: `Llego tu codigo al correo.
-      El codigo para verificarte es : ${code}`,
+      subject: "Código de verificación para completar registro en FOOTWEARN!",
+      text: `
+            Bienvenid@ ${userName}. Gracias por registrarse en FootWearn!
+            A continuación te brindamos el código de verificación para que completes el registro de tu cuenta.
+
+            Código de verificación: ${code}.
+            `,
     };
-
-    // enviar el correo electronico
-
     await transporter.sendMail(mailOptions);
-    console.log("Correo electronico enviado");
+    console.log("Correo electrónico enviado");
   } catch (error) {
-    console.log("Error al enviar el correo electronuco", error);
+    console.error("Error al enviar el correo electrónico", error);
+  }
+};
+
+export const sendNewEmail = async (
+  to: string,
+  code: string,
+  userName: string
+): Promise<void> => {
+  try {
+    //Configuration of details to Sent Email
+
+    const mailOptions = {
+      from: '"FootWearn New Code" nickswilliamapi@gmail.com',
+      to,
+      subject:
+        "Nuevo código de verificación para completar registro en FOOTWEARN!",
+      text: `
+            
+            Bienvenid@ nuevamente ${userName}.
+            Te volvemos a enviar nuevamente tu código de verificación.
+
+            Código de verificación: ${code}.
+            `,
+    };
+    await transporter.sendMail(mailOptions);
+    console.log("Correo electrónico enviado");
+  } catch (error) {
+    console.error("Error al enviar el correo electrónico", error);
   }
 };

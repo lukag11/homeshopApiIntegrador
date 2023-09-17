@@ -1,4 +1,4 @@
-import { Model, Schema, Types, model } from "mongoose";
+import { Model, Schema, model, Types } from "mongoose";
 
 export interface IIssue {
   title: string;
@@ -19,11 +19,11 @@ const IssueSchema = new Schema<IIssue>({
   },
   priority: {
     type: Number,
-    required: [true, "La prioridad es obligatoria"],
+    required: [true, "El número de prioridad es obligatorio"],
   },
   user: {
     type: Schema.Types.ObjectId,
-    ref: "Usuario",
+    ref: "User",
     required: true,
   },
   createdAt: {
@@ -33,5 +33,4 @@ const IssueSchema = new Schema<IIssue>({
 });
 
 const Issue: Model<IIssue> = model<IIssue>("Issue", IssueSchema);
-
 export default Issue;

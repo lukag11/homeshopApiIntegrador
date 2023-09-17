@@ -1,12 +1,9 @@
 import express, { Express } from "express";
-
 import cors from "cors";
-
-import { connectionDB } from "../database/config";
-
+import { connectDB } from "../database/config";
 import authRoutes from "../routes/auth";
-import ordersRoutes from "../routes/orders";
-import issuesRoutes from "../routes/issues";
+import orderRoutes from "../routes/orders";
+import issueRoutes from "../routes/issues";
 
 export class Server {
   app: Express;
@@ -18,16 +15,22 @@ export class Server {
   constructor() {
     this.app = express();
     this.port = process.env.PORT;
+    this.connectToDB();
+    this.middlewares();
     this.authPath = "/auth";
     this.ordersPath = "/orders";
     this.issuesPath = "/issues";
-    this.conectarDB();
-    this.middlewares();
     this.routes();
   }
 
-  async conectarDB(): Promise<void> {
-    await connectionDB();
+  listen(): void {
+    this.app.listen(this.port, () => {
+      console.log(`Conectado al puerto ${this.port}`);
+    });
+  }
+
+  async connectToDB(): Promise<void> {
+    await connectDB();
   }
 
   middlewares(): void {
@@ -37,13 +40,7 @@ export class Server {
 
   routes(): void {
     this.app.use(this.authPath, authRoutes);
-    this.app.use(this.ordersPath, ordersRoutes);
-    this.app.use(this.issuesPath, issuesRoutes);
-  }
-
-  listen(): void {
-    this.app.listen(this.port, () => {
-      console.log(`Se esta ejecutando el puerto  ${this.port}`);
-    });
+    this.app.use(this.ordersPath, orderRoutes);
+    this.app.use(this.issuesPath, issueRoutes);
   }
 }

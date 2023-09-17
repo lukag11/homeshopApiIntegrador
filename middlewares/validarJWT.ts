@@ -1,10 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-
 import jwt, { JwtPayload } from "jsonwebtoken";
+import User, { IUser } from "../models/user";
 
-import Usuario, { IUser } from "../models/user";
-
-const validarJWT = async (
+export const validateJWT = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -13,35 +11,32 @@ const validarJWT = async (
 
   if (!token) {
     res.status(401).json({
-      msg: "No hay token en la peticion",
+      message: "No hay un usuario logueado.",
     });
     return;
   }
 
   try {
-    const claveSecreta = process.env.CLAVESECRETA as string;
-    const payload = jwt.verify(token, claveSecreta) as JwtPayload;
+    const secretKey = process.env.SECRETPASS as string;
+    const payload = jwt.verify(token, secretKey) as JwtPayload;
 
     const { id } = payload;
 
-    const usuarioConfirmado: IUser | null = await Usuario.findById(id);
+    const userConfirmed: IUser | null = await User.findById(id);
 
-    if (!usuarioConfirmado) {
+    if (!userConfirmed) {
       res.status(401).json({
-        msg: "Token no válido",
+        message: "Token ingresado, no válido o expirado.",
       });
       return;
     }
 
-    req.body.usuarioConfirmado = usuarioConfirmado;
-
+    req.body.userConfirmed = userConfirmed;
     next();
   } catch (error) {
     console.log(error);
     res.status(401).json({
-      msj: "Token no válido",
+      message: "Token no válido",
     });
   }
 };
-
-export default validarJWT;

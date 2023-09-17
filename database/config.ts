@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
 
-export const connectionDB = async (): Promise<void> => {
+export const connectDB = async (): Promise<void> => {
   try {
     const dbURL = process.env.DB_URL;
     if (!dbURL) {
-      throw new Error("La Url no esta bien definida en los .env");
+      throw new Error(
+        "La URL de la base de datos no está correctamente definida, intente nuevamente"
+      );
     }
+
     await mongoose.connect(dbURL);
-    console.log("Base de datos online");
+    console.log("Conectado a la base de datos correctamente");
   } catch (error) {
-    console.log(error);
-    throw new Error("Error al iniciar la base de datos");
+    console.error(error);
+    throw new Error("Error al conectarse a la base de datos");
   }
 };

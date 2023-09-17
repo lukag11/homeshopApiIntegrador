@@ -1,13 +1,16 @@
-import { NextFunction, Request, Response } from "express";
-
+import { Request, Response, NextFunction } from "express";
 import { ROLES } from "../helpers/constants";
 
-export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-  const { rol } = req.body.usuarioConfirmado;
+export const isAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const { rol } = req.body.userConfirmed;
 
   if (rol !== ROLES.admin) {
     res.status(401).json({
-      msg: "El usuario no es administrador",
+      message: "No posee los permisos de usuario para reportar un error.",
     });
     return;
   }

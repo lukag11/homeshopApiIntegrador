@@ -1,27 +1,27 @@
 import { Router } from "express";
-import { check } from "express-validator";
-import { recolectarErrores } from "../middlewares/recolectarErrores";
 import { login, register, verifyUser } from "../controllers/auth";
-import { existeEmail } from "../helpers/validacionesDB";
+import { check } from "express-validator";
+import { existsEmail } from "../helpers/validacionesDB";
+import { recolectErrors } from "../middlewares/recolectarErrores";
 
 const router = Router();
 
 router.post(
   "/register",
   [
-    check("nombre", "el nombre es obligatorio").not().isEmpty(),
-    check(
-      "email",
-      "el email es obligatorio, o no se recibio un email valido"
-    ).isEmail(),
+    check("name", "El nombre es obligatorio").not().isEmpty(),
+    check("lastname", "El apellido es obligatorio").not().isEmpty(),
+    check("email", "El email es obligatorio").isEmail(),
     check(
       "password",
-      "la contraseña debe ser de 6 caracteres minimo "
-    ).isLength({ min: 6 }),
-    // validacion personalizada
-    check("email").custom(existeEmail),
-    // middlewares perzonailzado
-    recolectarErrores,
+      "La contraseña debe ser de 8 caracteres como mínimo"
+    ).isLength({ min: 8 }),
+
+    //custom validation
+    check("email").custom(existsEmail),
+
+    //middleware to colect errors
+    recolectErrors,
   ],
   register
 );
@@ -29,23 +29,19 @@ router.post(
 router.patch(
   "/verify",
   [
-    check("email", "el email es requerido").isEmail(),
-    check("code", "el codigo de verificacion es requerido").not().isEmpty(),
-    recolectarErrores,
+    check("email", "El email es obligatorio").isEmail(),
+    check("code", "El código de verificación es requerido").not().isEmpty(),
+    recolectErrors,
   ],
-
   verifyUser
 );
 
 router.post(
   "/login",
   [
-    check("email", "el email es requerido").isEmail(),
-    check(
-      "password",
-      "la contraseña debe ser de 6 caracteres minimo "
-    ).isLength({ min: 6 }),
-    recolectarErrores,
+    check("email", "Debe ingresar un mail para loguearse").isEmail(),
+    check("password", "Debe ingresar una contraseña").not().isEmpty(),
+    recolectErrors,
   ],
   login
 );

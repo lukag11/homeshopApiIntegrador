@@ -1,21 +1,21 @@
 import { Router } from "express";
 import { postNewIssue } from "../controllers/issues";
-import validarJWT from "../middlewares/validarJWT";
+import { validateJWT } from "../middlewares/validarJWT";
 import { isAdmin } from "../middlewares/validarRol";
 import { check } from "express-validator";
-import { recolectarErrores } from "../middlewares/recolectarErrores";
+import { recolectErrors } from "../middlewares/recolectarErrores";
 
 const router = Router();
 
 router.post(
   "/",
   [
-    validarJWT,
+    validateJWT,
     isAdmin,
     check("title", "El título es obligatorio").not().isEmpty(),
-    check("description", "La descripción es obligatoria").not().isEmpty(),
-    check("priority", "La prioridad es obgligatoria").not().isEmpty(),
-    recolectarErrores,
+    check("description", "La descripción es requerida").not().isEmpty(),
+    check("priority", "El número de prioridad es requerido").not().isEmpty(),
+    recolectErrors,
   ],
   postNewIssue
 );

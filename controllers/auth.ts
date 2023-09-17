@@ -1,42 +1,39 @@
 import { Request, Response } from "express";
-
-import Usuario, { IUser } from "../models/user";
-
-import { ROLES } from "../helpers/constants";
-
-import { sendEmail } from "../mailer/mailer";
-
+import User, { IUser } from "../models/user";
 import bcryptjs from "bcryptjs";
-
+import { ROLES } from "../helpers/constants";
 import randomstring from "randomstring";
-import generarJWT from "../helpers/generarJWT";
+import { sendEmail } from "../mailer/mailer";
+import { generarJWT } from "../helpers/generarJWT";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { nombre, email, password }: IUser = req.body;
+  const { name, lastname, email, password, rol }: IUser = req.body;
 
-  const usuario = new Usuario({ nombre, email, password });
+  const user = new User({ name, lastname, email, password, rol });
 
+  //creating salt from bcrypt, to encrypt the password as default value = 10
   const salt = bcryptjs.genSaltSync();
 
-  // encriptamos atraves de la funcion
-  usuario.password = bcryptjs.hashSync(password, salt);
+  //saving user with pass encrypted
+  user.password = bcryptjs.hashSync(password, salt);
 
   const adminKey = req.headers["admin-key"];
 
   if (adminKey === process.env.KEYFORADMIN) {
-    usuario.rol = ROLES.admin;
+    user.rol = ROLES.admin;
   }
 
-  const newCode = randomstring.generate(6);
+  //creating a randomstringcode of 6 characters
+  const newCode = randomstring.generate(6).toUpperCase();
 
-  usuario.code = newCode;
+  user.code = newCode;
 
-  await usuario.save();
+  await user.save();
 
-  await sendEmail(email, newCode);
+  await sendEmail(email, newCode, user.name);
 
   res.status(201).json({
-    usuario,
+    user,
   });
 };
 
@@ -47,41 +44,38 @@ export const verifyUser = async (
   const { email, code } = req.body;
 
   try {
-    const usuario = await Usuario.findOne({ email });
+    const user = await User.findOne({ email });
 
-    if (!usuario) {
+    if (!user) {
       res.status(400).json({
-        msg: "No se encontro el email en la BD",
+        message: "No se encontró el email ingresado.",
       });
       return;
     }
 
-    if (usuario.verified) {
+    if (user.verified) {
       res.status(400).json({
-        msg: "El usuario esta correctamente verificado",
+        message: "El usuario ya ha sido verificado.",
       });
       return;
     }
 
-    if (usuario.code !== code) {
+    if (user.code !== code) {
       res.status(401).json({
-        msg: "el codigo ingresado es incorrecto",
+        message: "El código de verificación ingresado es incorrecto",
       });
       return;
     }
 
-    const usuarioActualizado = await Usuario.findOneAndUpdate(
-      { email },
-      { verified: true }
-    );
+    await User.findOneAndUpdate({ email }, { verified: true });
 
     res.status(200).json({
-      msg: "Usuario verificado con exito",
+      message: "Usuario verificado correctamente.",
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
-      msg: "Error en el servidor",
+      message: "Error en el servidor",
     });
   }
 };
@@ -90,33 +84,32 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password }: IUser = req.body;
 
   try {
-    const usuario = await Usuario.findOne({ email });
+    const user = await User.findOne({ email });
 
-    if (!usuario) {
+    if (!user) {
       res.status(400).json({
-        msg: "No se encontro el emal en la base de datos",
-      });
-      return;
-    }
-    // compara el pass que tenemos alamcenado en la base de datos
-    const validarPassword = bcryptjs.compareSync(password, usuario.password);
-    if (!validarPassword) {
-      res.status(400).json({
-        msg: "La contraseña es incorrecta",
+        message: "El email ingresado, no corresponde a un usuario registrado.",
       });
       return;
     }
 
-    const token = await generarJWT(usuario.id);
+    const validatePassword = bcryptjs.compareSync(password, user.password);
+    if (!validatePassword) {
+      res.status(400).json({
+        message: "La contraseña ingresada, es incorrecta.",
+      });
+      return;
+    }
+    const token = await generarJWT(user.id);
 
     res.json({
-      usuario,
+      user,
       token,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
-      msg: "Error en el servidor",
+      message: "Error en el servidor",
     });
   }
 };

@@ -1,29 +1,29 @@
 import { Router } from "express";
-import { check } from "express-validator";
-import { getOrdenes, createOrder } from "../controllers/order";
-import { recolectarErrores } from "../middlewares/recolectarErrores";
-import validarJWT from "../middlewares/validarJWT";
+import { validateJWT } from "../middlewares/validarJWT";
+import { recolectErrors } from "../middlewares/recolectarErrores";
+import { createOrders, getOrders } from "../controllers/order";
 import { isVerified } from "../middlewares/validarVerificado";
+import { check } from "express-validator";
 
 const router = Router();
 
-router.get("/", [validarJWT, recolectarErrores], getOrdenes);
+router.get("/", [validateJWT, recolectErrors], getOrders);
 
 router.post(
   "/",
   [
-    validarJWT,
+    validateJWT,
     isVerified,
     check("price", "El precio es obligatorio").not().isEmpty(),
     check("shippingCost", "El costo de envío es obligatorio").not().isEmpty(),
-    check("total", "El total es obligatorio").not().isEmpty(),
-    check("shippingDetails", "Los detalles de envío son obligatorios")
+    check("shippingDetails", "Los detalles de envío son obligatorio")
       .not()
       .isEmpty(),
-    check("items", "El array de productos es obligarorio").not().isEmpty(),
-    recolectarErrores,
+    check("total", "El costo total es obligatorio").not().isEmpty(),
+    check("cartItems", "El array de items es obligatorio").not().isEmpty(),
+    recolectErrors,
   ],
-  createOrder
+  createOrders
 );
 
 export default router;

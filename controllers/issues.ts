@@ -1,19 +1,20 @@
 import { Request, Response } from "express";
-
 import Issue, { IIssue } from "../models/issue";
-
 import { ObjectId } from "mongoose";
 
-export const postNewIssue = async (req: Request, res: Response) => {
+export const postNewIssue = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { title, description, priority }: IIssue = req.body;
 
-  const usuario: ObjectId = req.body.usuarioConfirmado._id;
+  const user: ObjectId = req.body.userConfirmed._id;
 
   const issueData = {
     title,
     description,
     priority,
-    user: usuario,
+    user,
     createdAt: new Date(),
   };
 
@@ -23,5 +24,6 @@ export const postNewIssue = async (req: Request, res: Response) => {
 
   res.status(201).json({
     issue,
+    message: "Inconveniente reportado exitosamente",
   });
 };

@@ -1,36 +1,36 @@
 import { Request, Response } from "express";
-
 import Order, { IOrder } from "../models/order";
 import { ObjectId } from "mongoose";
+import randomstring from "randomstring";
 
-export const getOrdenes = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const usuarioId: ObjectId = req.body.usuarioConfirmado._id;
+export const getOrders = async (req: Request, res: Response): Promise<void> => {
+  const userID: ObjectId = req.body.userConfirmed._id;
 
-  const consulta = { user: usuarioId };
+  const consult = { user: userID };
 
-  const orders = await Order.find(consulta);
+  const orders = await Order.find(consult);
 
   res.json({
     data: [...orders],
   });
 };
 
-export const createOrder = async (
+export const createOrders = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const usuarioId: ObjectId = req.body.usuarioConfirmado._id;
+  const userID: ObjectId = req.body.userConfirmed._id;
 
   const orderData: IOrder = req.body;
 
+  const orderId = randomstring.generate(6).toUpperCase();
+
   const data = {
     ...orderData,
-    user: usuarioId,
-    createdAt: new Date(),
-    status: "pending",
+    user: userID,
+    orderID: orderId,
+    date: Date.now(),
+    status: "Pending",
   };
 
   const order = new Order(data);

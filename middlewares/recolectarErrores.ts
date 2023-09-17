@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-
 import { Result, ValidationError, validationResult } from "express-validator";
 
-export const recolectarErrores = (
+export const recolectErrors = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -10,7 +9,9 @@ export const recolectarErrores = (
   const errors: Result<ValidationError> = validationResult(req);
 
   if (!errors.isEmpty()) {
-    res.status(400).json(errors);
+    res.status(400).json({
+      errors,
+    });
   } else {
     next();
   }
