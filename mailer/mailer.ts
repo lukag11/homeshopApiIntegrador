@@ -1,6 +1,5 @@
 import nodemailer from "nodemailer";
 
-// COnfiguracion del transporte
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -16,14 +15,12 @@ export const sendEmail = async (
   userName: string
 ): Promise<void> => {
   try {
-    //Configuration of details to Sent Email
-
     const mailOptions = {
-      from: '"FootWearn Register" nickswilliamapi@gmail.com',
+      from: '"HomeShop Register" lukg2211@gmail.com',
       to,
-      subject: "Código de verificación para completar registro en FOOTWEARN!",
+      subject: "Código de verificación para registrarse en HomeShop!",
       text: `
-            Bienvenid@ ${userName}. Gracias por registrarse en FootWearn!
+            Bienvenid@ ${userName}. Gracias por registrarse en HomeShop!
             A continuación te brindamos el código de verificación para que completes el registro de tu cuenta.
 
             Código de verificación: ${code}.
@@ -42,13 +39,11 @@ export const sendNewEmail = async (
   userName: string
 ): Promise<void> => {
   try {
-    //Configuration of details to Sent Email
-
     const mailOptions = {
-      from: '"FootWearn New Code" nickswilliamapi@gmail.com',
+      from: '"HomeShop Nuevo Codigo" lukg2211@gmail.com',
       to,
       subject:
-        "Nuevo código de verificación para completar registro en FOOTWEARN!",
+        "Nuevo código de verificación para completar registro en HomeShop!",
       text: `
             
             Bienvenid@ nuevamente ${userName}.

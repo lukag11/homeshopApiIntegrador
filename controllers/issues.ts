@@ -24,6 +24,6 @@ export const postNewIssue = async (
 
   res.status(201).json({
     issue,
-    message: "Inconveniente reportado exitosamente",
+    message: "el error fue reportado exitosamente",
   });
 };

@@ -11,10 +11,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
   const user = new User({ name, lastname, email, password, rol });
 
-  //creating salt from bcrypt, to encrypt the password as default value = 10
   const salt = bcryptjs.genSaltSync();
 
-  //saving user with pass encrypted
   user.password = bcryptjs.hashSync(password, salt);
 
   const adminKey = req.headers["admin-key"];
@@ -23,7 +21,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     user.rol = ROLES.admin;
   }
 
-  //creating a randomstringcode of 6 characters
   const newCode = randomstring.generate(6).toUpperCase();
 
   user.code = newCode;
@@ -70,7 +67,7 @@ export const verifyUser = async (
     await User.findOneAndUpdate({ email }, { verified: true });
 
     res.status(200).json({
-      message: "Usuario verificado correctamente.",
+      message: "Usuario verificado exitosamente.",
     });
   } catch (error) {
     console.error(error);
@@ -96,7 +93,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const validatePassword = bcryptjs.compareSync(password, user.password);
     if (!validatePassword) {
       res.status(400).json({
-        message: "La contraseña ingresada, es incorrecta.",
+        message: "La contraseña ingresada, es invalida.",
       });
       return;
     }

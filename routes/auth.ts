@@ -17,10 +17,8 @@ router.post(
       "La contraseña debe ser de 8 caracteres como mínimo"
     ).isLength({ min: 8 }),
 
-    //custom validation
     check("email").custom(existsEmail),
 
-    //middleware to colect errors
     recolectErrors,
   ],
   register

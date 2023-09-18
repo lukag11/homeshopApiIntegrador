@@ -14,19 +14,19 @@ export interface IUser {
 const UserSchema = new Schema<IUser>({
   name: {
     type: String,
-    required: [true, "El nombre es obligatorio"],
+    required: [true, "El nombre es un campo obligatorio"],
   },
   lastname: {
     type: String,
-    required: [true, "El apellido es obligatorio"],
+    required: [true, "El apellido es un campo obligatorio"],
   },
   email: {
     type: String,
-    required: [true, "El email es obligatorio"],
+    required: [true, "El email es un campo obligatorio"],
   },
   password: {
     type: String,
-    required: [true, "La contraseña es obligatoria"],
+    required: [true, "La contraseña es un campo obligatoria"],
   },
   rol: {
     type: String,
@@ -41,7 +41,6 @@ const UserSchema = new Schema<IUser>({
   },
 });
 
-//Function that only returns the USER
 UserSchema.methods.toJSON = function () {
   const { __v, password, _id, code, ...user } = this.toObject();
   return user;

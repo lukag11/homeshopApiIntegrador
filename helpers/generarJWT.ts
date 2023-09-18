@@ -8,7 +8,7 @@ export const generarJWT = async (id: string = ""): Promise<string> => {
       payload,
       process.env.SECRETPASS as string,
       {
-        expiresIn: "30m",
+        expiresIn: "60m",
       },
       (error: Error | null, token: string | undefined) => {
         if (error) {

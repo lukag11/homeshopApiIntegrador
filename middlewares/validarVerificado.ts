@@ -9,7 +9,7 @@ export const isVerified = async (
 
   if (!verified) {
     res.status(401).json({
-      message: "El usuario no está verificado correctamente.",
+      message: "El usuario no está verificado .",
     });
     return;
   }
