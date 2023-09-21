@@ -3,13 +3,13 @@ const options = {
   definition: {
     openapi: "3.1.0",
     info: {
-      title: "Footwearn API",
+      title: "HOMESHOP",
       version: "1.0.0",
       description: "API correspondiente al HOMESHOP",
     },
     servers: [
       {
-        url: "https://integrador-react-home-shop.vercel.app",
+        url: "https://homeshop-api-integrador.vercel.app/",
       },
     ],
   },
